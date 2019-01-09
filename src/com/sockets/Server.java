@@ -1,28 +1,28 @@
 package com.sockets;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.net.ServerSocket;
+import java.io.IOException;
 import java.net.Socket;
+import java.net.ServerSocket;
+import java.util.ArrayList;
 
 public class Server {
 
     public static void main(String[] args) {
         int port = 5555;
+        int maxConnectionsCount = 50;
+        ArrayList<ClientHandlerThread> connections = new ArrayList<>(maxConnectionsCount);
         try {
+            System.out.println("Server is running");
             ServerSocket serverSocket = new ServerSocket(port);
-            Socket socket = serverSocket.accept();  // awaits for a connection with client
-            DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-            String line;
-            while (true) {
-                line = inputStream.readUTF();
-                System.out.println("received" + line);
-                outputStream.writeUTF(line);
-                outputStream.flush();
+            for (int i = 0; i < maxConnectionsCount; i++) {
+                Socket socket = serverSocket.accept();  // awaits for a connection with client
+                ClientHandlerThread clientHandler = new ClientHandlerThread(socket, line-> connections.forEach(s->s.writeToClient(line)));
+                connections.add(clientHandler);
+                new Thread(clientHandler).start();
             }
-        } catch (Exception x) {
-            x.printStackTrace();
         }
+        catch (IOException x) {  x.printStackTrace();}
+
     }
 }
+
