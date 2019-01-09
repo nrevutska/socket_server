@@ -15,7 +15,7 @@ public class Server {
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             String line;
-            while (socket.isConnected()) {
+            while (true) {
                 line = inputStream.readUTF();
                 System.out.println("received" + line);
                 outputStream.writeUTF(line);
