@@ -16,7 +16,7 @@ public class ClientHandlerThread implements Runnable {
     public void run() {
         try {
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-            this.outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream = new DataOutputStream(socket.getOutputStream());
             String line;
             while (true) {
                 line = inputStream.readUTF();
@@ -31,7 +31,7 @@ public class ClientHandlerThread implements Runnable {
         }
     }
 
-    protected void writeToClient(String str) {
+    void writeToClient(String str) {
         try {
             outputStream.writeUTF(str);
             outputStream.flush();
@@ -40,7 +40,7 @@ public class ClientHandlerThread implements Runnable {
         }
     }
 
-    protected ClientHandlerThread(Socket socket, Consumer<String> onMessageReceive) {
+    ClientHandlerThread(Socket socket, Consumer<String> onMessageReceive) {
         this.socket = socket;
         this.onMessageReceive = onMessageReceive;
     }
